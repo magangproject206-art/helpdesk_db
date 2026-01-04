@@ -1,7 +1,7 @@
 <?php
-$conn = mysqli_connect("localhost","root","","helpdesk_db");
+$conn = mysqli_connect("localhost", "root", "", "helpdesk_db");
 
-if(!$conn){
-    die("Koneksi database gagal");
+if (!$conn) {
+    die("Koneksi gagal: " . mysqli_connect_error());
 }
 ?>

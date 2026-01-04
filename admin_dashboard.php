@@ -2,12 +2,12 @@
 session_start();
 include "config/db.php";
 
-if (!isset($_SESSION['id']) || $_SESSION['role'] != 'admin') {
+if (!isset($_SESSION['login']) || $_SESSION['role'] != 'admin') {
     header("Location: index.php");
     exit;
 }
 
-$data = mysqli_query($conn,"SELECT * FROM pegawai WHERE status='pending'");
+$data = mysqli_query($conn, "SELECT * FROM users ORDER BY status DESC");
 ?>
 <!DOCTYPE html>
 <html>
@@ -16,29 +16,38 @@ $data = mysqli_query($conn,"SELECT * FROM pegawai WHERE status='pending'");
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+
 <nav class="navbar navbar-dark bg-dark">
-<span class="navbar-brand">Admin Dashboard</span>
+<span class="navbar-brand">Admin Helpdesk</span>
 <a href="logout.php" class="btn btn-danger btn-sm">Logout</a>
 </nav>
 
 <div class="container mt-4">
+<h4>Data User</h4>
 <table class="table table-bordered">
 <tr>
-<th>Nama</th>
-<th>Email</th>
-<th>Username</th>
-<th>Aksi</th>
+<th>No</th><th>Nama</th><th>Username</th><th>Role</th><th>Status</th><th>Aksi</th>
 </tr>
-<?php while($u=mysqli_fetch_assoc($data)){ ?>
+<?php $no=1; while($u=mysqli_fetch_assoc($data)): ?>
 <tr>
-<td><?= $u['nama']; ?></td>
-<td><?= $u['email']; ?></td>
-<td><?= $u['username']; ?></td>
+<td><?= $no++ ?></td>
+<td><?= $u['nama'] ?></td>
+<td><?= $u['username'] ?></td>
+<td><?= $u['role'] ?></td>
+<td><?= $u['status'] ?></td>
 <td>
-<a href="approve_user.php?id=<?= $u['id_pegawai']; ?>" class="btn btn-success btn-sm">ACC</a>
+<?php if ($u['status']=='pending'): ?>
+<a href="approve_user.php?id=<?= $u['id'] ?>"
+   class="btn btn-success btn-sm"
+   onclick="return confirm('Aktifkan akun ini?')">
+Aktifkan
+</a>
+<?php else: ?>
+<span class="text-muted">Aktif</span>
+<?php endif; ?>
 </td>
 </tr>
-<?php } ?>
+<?php endwhile; ?>
 </table>
 </div>
 </body>
